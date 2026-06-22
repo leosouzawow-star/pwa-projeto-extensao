@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Escola Técnica Estadual República</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#15803d">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-green-50 text-slate-800">
+
+  <a href="#inicio"
+    class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-green-800 text-white px-3 py-2 rounded">
+    Ir para o conteúdo principal
+  </a>
+
+  <header class="bg-green-700 text-white px-4 py-6">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-3xl font-bold">🏫 Escola Técnica Estadual República</h1>
+      <p class="mt-1 text-green-100">Site acessível, responsivo e instalável (PWA).</p>
+    </div>
+  </header>
+
+  <div id="app">
+    <main class="max-w-3xl mx-auto px-4 pb-24">
+
+      <nav class="mt-4" aria-label="Navegação principal">
+        <button
+          class="md:hidden inline-flex items-center gap-2 rounded bg-green-700 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400"
+          @click="menuAberto = !menuAberto"
+          :aria-expanded="menuAberto.toString()"
+          aria-controls="menu-principal"
+          aria-label="Abrir ou fechar menu de navegação">
+          ☰ Menu
+        </button>
+        <ul id="menu-principal" class="mt-3 md:mt-0 md:flex md:gap-6"
+            :class="menuAberto ? 'block' : 'hidden md:flex'">
+          <li><a class="block py-1 font-semibold text-green-700 hover:underline" href="#inicio" @click="menuAberto = false">Início</a></li>
+          <li><a class="block py-1 font-semibold text-green-700 hover:underline" href="#inscricao" @click="menuAberto = false">Inscrições</a></li>
+          <li><a class="block py-1 font-semibold text-green-700 hover:underline" href="#inscritos" @click="menuAberto = false">Inscritos</a></li>
+        </ul>
+      </nav>
+
+      <section id="inicio" aria-labelledby="sec-intro" class="bg-white rounded-xl shadow p-6 mt-6 border-l-4 border-green-600">
+        <h2 id="sec-intro" class="text-xl font-bold text-green-700">Boas-vindas</h2>
+        <p class="mt-2 text-slate-600">Bem-vindo ao portal de atividades da Escola Técnica Estadual República.</p>
+        <img src="escola.png"
+          alt="Fachada da Escola Técnica Estadual República"
+          class="rounded-lg shadow mt-4 w-full object-cover max-h-48">
+        <p class="mt-4">Visitantes hoje: <strong class="text-green-700">{{ contador }}</strong></p>
+        <button
+          class="mt-3 inline-flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 text-white hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400"
+          aria-label="Registrar visita"
+          @click="contador++">
+          Registrar visita +1
+        </button>
+      </section>
+
+      <section id="inscricao" aria-labelledby="insc" class="bg-white rounded-xl shadow p-6 mt-6 border-l-4 border-green-600">
+        <h2 id="insc" class="text-xl font-bold text-green-700">Inscrição em Atividade</h2>
+        <form class="mt-4 space-y-3" @submit.prevent="adicionarInscrito">
+          <div>
+            <label for="nome" class="block font-semibold">Nome do aluno</label>
+            <input id="nome" v-model="form.nome" required
+              class="mt-1 w-full rounded border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+              aria-describedby="d-nome" />
+            <small id="d-nome" class="text-slate-500">Obrigatório</small>
+          </div>
+          <div>
+            <label for="turma" class="block font-semibold">Turma</label>
+            <input id="turma" v-model="form.turma" required
+              class="mt-1 w-full rounded border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+              aria-describedby="d-turma" />
+            <small id="d-turma" class="text-slate-500">Ex.: 2° ano A</small>
+          </div>
+          <button type="submit"
+            class="rounded bg-green-700 px-4 py-2 text-white font-semibold hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400">
+            ➕ Adicionar
+          </button>
+        </form>
+      </section>
+
+      <section id="inscritos" aria-labelledby="lista" class="bg-white rounded-xl shadow p-6 mt-6 border-l-4 border-green-600">
+        <h2 id="lista" class="text-xl font-bold text-green-700">Inscritos</h2>
+        <ul class="mt-3 space-y-2">
+          <li v-for="(i, idx) in inscritos" :key="idx"
+            class="flex items-center justify-between gap-3 border-b border-slate-200 pb-2">
+            <span>🎒 {{ i.nome }} — {{ i.turma }}</span>
+            <button
+              class="rounded bg-red-100 text-red-700 px-3 py-1 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-400"
+              @click="removerInscrito(idx)"
+              aria-label="Remover inscrito">
+              Remover
+            </button>
+          </li>
+        </ul>
+        <p class="mt-4 font-semibold text-slate-700">
+          Total de inscritos: <span class="text-green-700">{{ inscritos.length }}</span>
+        </p>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="bg-green-700 text-white px-4 py-6 text-sm text-center mt-10">
+    <p>© 2025 — Escola Técnica Estadual República | Projeto de Extensão Front-end</p>
+  </footer>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+  <!-- App Vue inline para evitar problemas de cache -->
+  <script>
+    const { createApp } = Vue;
+    createApp({
+      data() {
+        return {
+          contador: 0,
+          menuAberto: false,
+          form: { nome: '', turma: '' },
+          inscritos: []
+        };
+      },
+      methods: {
+        adicionarInscrito() {
+          if (!this.form.nome || !this.form.turma) return;
+          this.inscritos.push({ nome: this.form.nome, turma: this.form.turma });
+          this.form.nome = '';
+          this.form.turma = '';
+        },
+        removerInscrito(idx) {
+          this.inscritos.splice(idx, 1);
+        }
+      }
+    }).mount('#app');
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js');
+      });
+    }
+  </script>
+
+</body>
+</html>
